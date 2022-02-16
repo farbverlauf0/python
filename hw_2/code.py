@@ -7,5 +7,5 @@ def latex_table(lst):
 inp = [['cat', 12, 4], ['dog', 20, 8], ['human', 75, 32]]
 outp = latex_table(inp)
 
-with open('table.txt', 'w') as f:
+with open('table.tex', 'w') as f:
     f.write(outp)
