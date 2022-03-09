@@ -2,7 +2,11 @@ import math
 import time
 from concurrent.futures import ProcessPoolExecutor
 from multiprocessing import cpu_count
-from datetime import datetime
+import logging
+
+
+FORMAT = '%(message)s %(asctime)s'
+logging.basicConfig(format=FORMAT, filename='medium_log.txt')
 
 def sync_integrate(f, a, b, n_iter):
     acc = 0
@@ -13,19 +17,15 @@ def sync_integrate(f, a, b, n_iter):
 
 def sync_integrate_with_log(args):
     f, a, b, n_iter, i, n_jobs = args
-    sync_integrate_with_log.buffer += f'{i + 1}th job was executed at {datetime.now()} with n_jobs={n_jobs}\n'
+    logging.warning('Job number %s out of %s was executed at', i + 1, n_jobs)
     return sync_integrate(f, a, b, n_iter)
 
-sync_integrate_with_log.buffer = ''
-
+messages = []
 def integrate(f, a, b, *, n_jobs=1, n_iter=1000):
     step = (b - a) / n_jobs
     args = [(f, a + i * step, a + (i + 1) * step, n_iter // n_jobs, i, n_jobs) for i in range(n_jobs)]
     with ProcessPoolExecutor(max_workers=n_jobs) as executor:
         result = sum(executor.map(sync_integrate_with_log, args))
-    with open('medium_log.txt', 'a') as f:
-        f.write(sync_integrate_with_log.buffer)
-    sync_integrate_with_log.buffer = ''
     return result
 
 if __name__ == '__main__':
@@ -36,7 +36,7 @@ if __name__ == '__main__':
     res = sync_integrate(math.cos, 0, math.pi/2, n_iter)
     message = f'Sync calc executed in {time.time() - start}, res={res}\n'
     print(message, end='')
-    with open('compare.txt', 'a') as f:
+    with open('medium_compare.txt', 'a') as f:
         f.write(message)
 
     # On multiple cpu
@@ -45,5 +45,5 @@ if __name__ == '__main__':
         res = integrate(math.cos, 0, math.pi/2, n_jobs=n_jobs, n_iter=n_iter)
         message = f'Processpool with n_jobs={n_jobs} executed in {time.time() - start}, res={res}\n'
         print(message, end='')
-        with open('compare.txt', 'a') as f:
+        with open('medium_compare.txt', 'a') as f:
             f.write(message)
