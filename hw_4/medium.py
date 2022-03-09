@@ -32,8 +32,8 @@ if __name__ == '__main__':
     res = sync_integrate(math.cos, 0, math.pi/2, n_iter)
     message = f'Sync calc executed in {time.time() - start}, res={res}'
     print(message)
-    # with open('compare.txt', 'a') as f:
-        # f.write(message)
+    with open('compare.txt', 'a') as f:
+        f.write(message)
 
     # On multiple cpu
     for n_jobs in range(1, 2 * cpu_count + 1):
