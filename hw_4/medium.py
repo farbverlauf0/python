@@ -30,8 +30,8 @@ if __name__ == '__main__':
     # Normal
     start = time.time()
     res = sync_integrate(math.cos, 0, math.pi/2, n_iter)
-    message = f'Sync calc executed in {time.time() - start}, res={res}'
-    print(message)
+    message = f'Sync calc executed in {time.time() - start}, res={res}\n'
+    print(message, end='')
     with open('compare.txt', 'a') as f:
         f.write(message)
 
